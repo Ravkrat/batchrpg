@@ -90,13 +90,17 @@ goto allignmentSelectionDisplay
 :statDisplayLogic
 	IF  %statDisplay% GTR 0 (goto :statAllocationDisplay)
 	IF  %statDisplay% EQU 0 (goto :finalInitDisplay)
-:endClassChoice
-	IF /I "%classInput%"=="f" set ClassChoice=Fighter 
-	IF /I "%classInput%"=="c" set ClassChoice=Cleric 
-	IF /I "%classInput%"=="p" set ClassChoice=Paladin 
-	IF /I "%classInput%"=="r" set ClassChoice=Rogue 
-	IF /I "%classInput%"=="m" set ClassChoice=Mage 
+:endClassChoice	
+	echo in endClassChoice
+	pause
+	IF /I "%classInput%"=="f" set ClassChoice=Fighter && call Classes.bat :fighter
+	IF /I "%classInput%"=="c" set ClassChoice=Cleric && call Classes.bat :cleric
+	IF /I "%classInput%"=="p" set ClassChoice=Paladin && call Classes.bat :paladin
+	IF /I "%classInput%"=="r" set ClassChoice=Rogue && call Classes.bat :rogue
+	IF /I "%classInput%"=="m" set ClassChoice=Mage && call Classes.bat :mage
 	cls
+	echo going out of endClassChoice
+	pause
 	goto statAllocationDisplay
 :endallignment
 	IF /I "%nature%"=="l" set allignment=lawfull
@@ -113,17 +117,21 @@ goto allignmentSelectionDisplay
 	::allows for allignment selection and selection redo
 	::will eventually play a part in deciding which narrative is used
 	::plus dialoge choices w/npc's
+	:contAllignment
 	echo                   Allignment Selection
 	echo _______________________________________________________________
 	echo +                  Which are you?                             +
 	echo +[l]awfull good - [n]eutral good - [c]haotic good             +
 	echo ---------------------------------------------------------------
 	set /p allignment=
-	goto loopCheckAllignment
-	:contAllignment
-	goto endallignment
+	IF %checkAllignment% EQU %checkUsed% ( 
+		goto :finalInitDisplay
+	) ELSE (
+		goto loopCheckAllignment
+	)
 :classSelectionDisplay
 	::allows for class selection, and selection re-do
+	:contClass
 	echo                         Class Selection
 	echo ________________________________________________________________
 	echo +-Which class do you wish to play?-----------------------------+
@@ -134,14 +142,16 @@ goto allignmentSelectionDisplay
 	::takes in user input then goes to endstatInit to write it to ClassChoice.txt
 	set /p classInput= 
 	set ClassChoice=%classInput%
-	goto loopCheckClass
-	:contClass
-	goto endClassChoice
+	IF %checkClass% EQU %checkUsed% ( 
+		goto :finalInitDisplay
+	) ELSE (
+		goto loopCheckClass
+	)
+	
+	
 
 :statAllocationDisplay
 	cls
-	IF %statDisplay% EQU 9 (goto :loopCheckStart) else(goto :contStart)
-	IF %statDisplay% EQU 2 (goto :loopCheckStat) else(goto :contStat)
 	:contStat
 	set 'statinput='
 	echo                Stat-point Allocation
@@ -155,9 +165,11 @@ goto allignmentSelectionDisplay
 	::taken in user input then run ifs to find match
 	set /p statInput=
 	goto statLogic
+
+
 :finalInitDisplay
-	echo Kappa Kappa
-	pause
+	
+	
 	goto:EOF
 	::eventually add final display screen here 
 	::show stats,name,class,allignment
@@ -165,38 +177,40 @@ goto allignmentSelectionDisplay
 ::statInfoDisplay
 
 :nameSet
+	
 	::allows for the player name to be set and resetting player-name
 	echo Remember:Your name will remain with you throughout the game.
  	set /p Name=Enter your name: 
 	cls
-	goto loopCheckName
 	
-	goto allignmentSelectionDisplay
+
+	IF %checkName% EQU %checkUsed% (
+		goto :finalInitDisplay 
+	) ELSE ( 
+		goto loopCheckName
+	)
 ::------------------------------------------------------------------------
 ::------------------------------------------------------------------------
 ::VALIDATION BLOCKS
 ::------------------------------------------------------------------------
 ::------------------------------------------------------------------------
 :inputValidation
-echo not used at the moment
+::inputValidation is not used atm
+
 ::keeps the initial-loop from repeating
+::loopCheck[Text] for use in the Check[Text] label
+
 :loopCheckName
-IF %checkName% EQU 1 set checkName=2 goto :contName
-pause
-IF %checkName% GRT 1 goto finalInitDisplay
-pause
+IF  %checkName% EQU %checkBase% set checkName=2 && goto :allignmentSelectionDisplay
 
 :loopCheckAllignment
-IF %checkAllignment% EQU 2 (goto :finalInitDisplay)
-IF %checkAllignment% EQU 1 (set checkloop=2)(goto :contAllignment)
+IF %checkAllignment% EQU %checkBase% set checkloop=2 && goto :endallignment
 
 :loopCheckClass
-IF %checkClass% EQU 2 (goto :finalInitDisplay)
-IF %checkClass% EQU 1 (set checkloop=2)(goto :contClass)
+IF %checkClass% EQU %checkBase% set checkloop=2 && goto :endClassChoice
 
 :loopCheckStat
-IF %checkStat% EQU 2 (goto :finalInitDisplay)
-IF %checkStat% EQU 1 (set checkloop=2)(goto :contStat)
+IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 ::-------------------------------------------------------------------------
 ::-------------------------------------------------------------------------
 ::VARIABLE BLOCKS
@@ -206,24 +220,34 @@ IF %checkStat% EQU 1 (set checkloop=2)(goto :contStat)
 	::variable [stat]Display is used for player feedback
 	::after variable [stat]Display is used in label statInit it will overwright 
 	::variable [stat],eventually variable [stat]/s will be written to PlayerInfo.txt
-	set Strength=1
-	set Health=10
-	set HealthCount=10
-	set Constitution=1
-	set Intelligence=1
-	set Charm=5
-	set CharmCount=5
-	set Charisma=1
+
+	set Strength=0
+	set Charisma=0
+	set Constitution=0
+	set Intelligence=0
+	set Health=0
+	set Charm=0
+
+	set HealthCount=0
+	set CharmCount=0
+
 	set StrDisplay=%Strength%
 	set ConDisplay=%Constitution%
 	set IntDisplay=%Intelligence%
-	set CharDisplay=%Charisma%
 	set HpDisplay=%Health%
 	set CharmDisplay=%Charm%
+
+	set CharDisplay=%Charisma%
+	
+	::checked against checkBase for first loop
+	::checked against checkUsed to stop second loop-through(after finalInitDisplay is called)
 	set checkName=1
 	set checkAllignment=1
 	set checkClass=1
 	set checkStat=1
+
+	set checkBase=1
+	set checkUsed=2
 
 	::used in label statAllocationDisplay
 	set statCap=10
@@ -244,7 +268,7 @@ IF %checkStat% EQU 1 (set checkloop=2)(goto :contStat)
 	
 
 
-CALL PlayerInfo.bat 
+::CALL PlayerInfo.bat 
 
 ::echo %ClassChoice% > ClassChoice.txt
 ::echo %Name% > PlayerInfo.txt
