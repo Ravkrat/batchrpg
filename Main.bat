@@ -1,0 +1,33 @@
+@echo off
+::window size+coloration
+
+::end win siz+col
+:: start-endstart are for the echos i want to be constants
+:start
+
+
+
+
+
+
+
+
+
+:endstart
+::space for non-constant echos
+
+
+::end space
+
+
+
+
+
+
+
+
+
+
+::variables
+
+

@@ -1,0 +1,89 @@
+::wishlist 
+a dnd inspired dos rpg 
+text only 
+continual display of:name,health,current location,quest tracker
+
+::end wishlist
+
+story:
+time:10th century ad(equiv. based on armor/weapons/mindsets of characters)
+-tracks leading from the south,broken branches etc-
+you are mid-age person that woke up in the woods just outside of a town
+with amnesia,basic knowledge about yourself based on your apperal/reaction to gear
+you meet someone that fills in the blanks
+go into town and start talking to people 
+Hear about big baddie
+
+
+plot-twist:you are the big baddie.the person that managed to conquer the world
+reduced to running from your former aids/comrades.
+
+In your amnesia you see a wanted poster giving large sum of money to anyone that 
+kills the big baddie. your 'friend'persuades you to accept the job. after spending
+time killing critters to get raw goods(leathers/meats/claws/etc) and selling the 
+goods in town to buy better gear.
+
+next part is based on your class.
+you go on quests with your friend to save up money to travel to the capital far to the south
+to accept the posted quest 
+
+each flashback reveals your past and how you ascended to rule,why you rule.
+and how you got amnesia
+:fighter
+	flashbacks after: seeing blood on blade
+	past:conscript
+	ascended to: end the bloodshed..even if that meant soaking yourself in it
+	amnesia event:failed assassination by war hawk/s(cutting into profit)
+	big baddie:war hawk leader
+:cleric
+	flashbacks from: seeing a burning abbey
+	past:survivor
+	ascended to:Spread your faith..even if by force
+	amnesia event:failed assassination by childhood friend
+	big baddie:childhood friend
+:paladin
+	flashbacks from: seeing crying child
+	past:pedigree
+	ascended to:Lead people away from the dark..even if you never went to the light
+	amnesia event:failed assassination by star pupil
+	big baddie:star pupil
+:rogue
+	flashbacks from: being stabbed in the back
+	past:high aristocrat
+	ascended to:get vengeance for the killing of your family 
+	amnesia event:failed assassination by prior rulers cliche
+	big baddie:prior ruler
+:mage
+	flashbacks from: burning book
+	past:apprentice
+	ascended to:Gain access to forbidden scrolls(old magik)
+	amnesia event:support network feared for the kingdom and tried to assassinate you
+		cont:paranoia surrounds old magik
+	big baddie:paranoia
+
+what your rule was like(eventually make into passing comments by npc's)
+:fighter
+	there was plenty for every one 
+	though rumors floated that you actively tortured captives
+	and utterly destroyed any how opposed you in your rise to power
+:cleric
+	through your efforts your faith spread to the masses
+	but faith cant fill a empty stomach
+	nor can it stamp out the rumors of you killing your entire
+	family to asure your ascent to power
+
+:paladin
+	though you taught kindness and mercy
+	and you ruled by example
+	people still had second thoughts about the source of your power
+
+:rogue
+	though you secured your future
+	you failed to manage your kingdom
+	the filth of humanity ran amok
+	you are hated
+	even though people have forgotten your family and what happened to them
+:mage
+	all the knowledge of the world at your beck and call
+	to bad old fears lingered
+	if only they knew what you were looking for.
