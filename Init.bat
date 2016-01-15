@@ -1,21 +1,12 @@
 @echo off
-::-------------------------------------------
-::-------------------------------------------
-::TO-DO LIST
-::-------------------------------------------
-::-------------------------------------------
-::labels working: name,allignment,class
-::labels not-working: statAllocationDisplay
-::labels not-written: initDisplay,statInfo,inputValidation
-::main labels: DISPLAY,LOGIC,INPUT BLOCKS
-::support labels: all end[name] and update[short-hand stat] labels 
-::auxillary labels:initVarSet,inputValidation 
-
+::setlocal enabledelayedexpansion
 
 ::variables
 
 ::getting things started
-goto InitVarSet
+echo before initVarSet
+pause
+goto initVarSet
 :contName
 goto nameSet
 ::after this one, execution starts jumping between aux/main/support labels
@@ -86,21 +77,18 @@ goto allignmentSelectionDisplay
 	IF /I "%statInput%"=="I" goto updateInt
 	IF /I "%statInput%"=="Ch" goto updateChar
 	IF /I "%statInput%"=="x" goto statInfoDisplay
+	IF /I "%statInput%"=="r" goto numGen
 
 :statDisplayLogic
 	IF  %statDisplay% GTR 0 (goto :statAllocationDisplay)
 	IF  %statDisplay% EQU 0 (goto :finalInitDisplay)
 :endClassChoice	
-	echo in endClassChoice
-	pause
 	IF /I "%classInput%"=="f" set ClassChoice=Fighter && call Classes.bat :fighter
 	IF /I "%classInput%"=="c" set ClassChoice=Cleric && call Classes.bat :cleric
 	IF /I "%classInput%"=="p" set ClassChoice=Paladin && call Classes.bat :paladin
 	IF /I "%classInput%"=="r" set ClassChoice=Rogue && call Classes.bat :rogue
 	IF /I "%classInput%"=="m" set ClassChoice=Mage && call Classes.bat :mage
 	cls
-	echo going out of endClassChoice
-	pause
 	goto statAllocationDisplay
 :endallignment
 	IF /I "%nature%"=="l" set allignment=lawfull
@@ -156,7 +144,7 @@ goto allignmentSelectionDisplay
 	set 'statinput='
 	echo                Stat-point Allocation
 	echo _______________________________________________________
-	echo +-you have %statDisplay% stat points un-assigned-----------------+
+	echo +-you have %statDisplay% stat points un-assigned,[r]e-roll stat points+
 	echo +-[S]trength [C]onstitution [I]ntelligence [Ch]arisma +
 	echo +-Strength:%StrDisplay% Constitution:%ConDisplay% Intelligence:%IntDisplay% Charisma:%CharDisplay% +
 	echo +-Hp:%HpDisplay% Charm:%CharmDisplay%----------------------------------------+
@@ -177,7 +165,7 @@ goto allignmentSelectionDisplay
 ::statInfoDisplay
 
 :nameSet
-	
+	set genCount=2
 	::allows for the player name to be set and resetting player-name
 	echo Remember:Your name will remain with you throughout the game.
  	set /p Name=Enter your name: 
@@ -217,19 +205,21 @@ IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 ::-------------------------------------------------------------------------
 ::-------------------------------------------------------------------------
 :initVarSet
+	echo in initVarSet
+	pause
 	::variable [stat]Display is used for player feedback
 	::after variable [stat]Display is used in label statInit it will overwright 
 	::variable [stat],eventually variable [stat]/s will be written to PlayerInfo.txt
 
-	set Strength=0
-	set Charisma=0
-	set Constitution=0
-	set Intelligence=0
-	set Health=0
-	set Charm=0
+	set Strength=1
+	set Charisma=1
+	set Constitution=1
+	set Intelligence=1
+	set Health=1
+	set Charm=1
 
-	set HealthCount=0
-	set CharmCount=0
+	set HealthCount=1
+	set CharmCount=1
 
 	set StrDisplay=%Strength%
 	set ConDisplay=%Constitution%
@@ -248,12 +238,14 @@ IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 
 	set checkBase=1
 	set checkUsed=2
+	set statMin=1
+	set statMax=101
 
 	::used in label statAllocationDisplay
-	set statCap=10
-	set statDisplay=0
+
+	set statDisplay=1
 	set statZero=0 
-	set statDisplay=%statCap%
+	
 	
 	::used in classSelectionDisplay
 	set ClassChoice=
@@ -263,13 +255,29 @@ IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 
 	::used in name
 	set Name=
-	goto nameSet
 
+	::used in numGen
+	set genCount=1
+	echo end of initVarSet
+	pause
+	goto :numGen
+
+
+:numGen
+	echo in numGen
+	pause
+	set  statDisplay=%random% %% %statMax%
+	echo after random num gen
+	pause	
+
+	IF %genCount% ==  %checkBase%  goto :nameSet
+	 
+	IF %genCount% == %checkUsed% goto :statDisplayLogic
 	
 
 
 ::CALL PlayerInfo.bat 
 
-::echo %ClassChoice% > ClassChoice.txt
+
 ::echo %Name% > PlayerInfo.txt
 ::echo %nature% >> PlayerInfo.txt

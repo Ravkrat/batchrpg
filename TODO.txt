@@ -1,10 +1,8 @@
 fix:
 init.bat
-	input validation
-	main loop/final selection
+	:numGen,divide by zero error
 touch up:
-Classes.bat
-	finish writing -base- class stat info
+
 PlayerInfo.bat
 	finish writing a way to grab player info from init and put it into its 
 	corresponding function in playerinfo
@@ -13,3 +11,4 @@ write:
 	algorithm for combat in combat.bat
 		also the logic behind the combat 
 	test npc's to NPCs.bat
+	main.bat
