@@ -1,8 +1,8 @@
 fix:
 init.bat
-	:numGen,divide by zero error
+	:statAllocationDisplay
+		stat-updating w/loop
 touch up:
-
 PlayerInfo.bat
 	finish writing a way to grab player info from init and put it into its 
 	corresponding function in playerinfo

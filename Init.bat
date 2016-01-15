@@ -1,11 +1,11 @@
 @echo off
+
 ::setlocal enabledelayedexpansion
 
 ::variables
 
 ::getting things started
-echo before initVarSet
-pause
+
 goto initVarSet
 :contName
 goto nameSet
@@ -77,7 +77,15 @@ goto allignmentSelectionDisplay
 	IF /I "%statInput%"=="I" goto updateInt
 	IF /I "%statInput%"=="Ch" goto updateChar
 	IF /I "%statInput%"=="x" goto statInfoDisplay
-	IF /I "%statInput%"=="r" goto numGen
+	IF /I "%statInput%"=="r" goto resetStats
+
+:resetStats
+	IF %ClassChoice% == %checkFighter% call  Classes.bat :fighter	
+	IF %ClassChoice% == %checkCleric% call Classes.bat :cleric 
+	IF %ClassChoice% == %checkPaladin%  call Classes.bat :paladin 
+	IF %ClassChoice% == %checkRogue%  call Classes.bat :rogue 
+	IF %ClassChoice% == %checkMage%  call Classes.bat :mage 
+	goto numGen
 
 :statDisplayLogic
 	IF  %statDisplay% GTR 0 (goto :statAllocationDisplay)
@@ -144,12 +152,10 @@ goto allignmentSelectionDisplay
 	set 'statinput='
 	echo                Stat-point Allocation
 	echo _______________________________________________________
-	echo +-you have %statDisplay% stat points un-assigned,[r]e-roll stat points+
-	echo +-[S]trength [C]onstitution [I]ntelligence [Ch]arisma +
-	echo +-Strength:%StrDisplay% Constitution:%ConDisplay% Intelligence:%IntDisplay% Charisma:%CharDisplay% +
-	echo +-Hp:%HpDisplay% Charm:%CharmDisplay%----------------------------------------+
-	echo +-Stat Info [x]---------------------------------------+
-	echo -------------------------------------------------------
+	echo +-you have %statDisplay% stat points un-assigned,[r]e-roll stat points
+	echo +-[S]trength:%StrDisplay% [C]onstitution:%ConDisplay% [I]ntelligence:%IntDisplay% [Ch]arisma:%CharDisplay% 
+	echo +-Hp:%HpDisplay% Charm:%CharmDisplay%
+	echo +-Stat Info [x]
 	::taken in user input then run ifs to find match
 	set /p statInput=
 	goto statLogic
@@ -157,8 +163,10 @@ goto allignmentSelectionDisplay
 
 :finalInitDisplay
 	
-	
-	goto:EOF
+
+	echo finalInitDisplay
+	pause
+	exit /b
 	::eventually add final display screen here 
 	::show stats,name,class,allignment
 	::and allow changing of any.
@@ -205,8 +213,7 @@ IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 ::-------------------------------------------------------------------------
 ::-------------------------------------------------------------------------
 :initVarSet
-	echo in initVarSet
-	pause
+
 	::variable [stat]Display is used for player feedback
 	::after variable [stat]Display is used in label statInit it will overwright 
 	::variable [stat],eventually variable [stat]/s will be written to PlayerInfo.txt
@@ -216,17 +223,16 @@ IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 	set Constitution=1
 	set Intelligence=1
 	set Health=1
-	set Charm=1
+	set Charm=0
 
-	set HealthCount=1
-	set CharmCount=1
+	set HealthCount=10
+	set CharmCount=5
 
 	set StrDisplay=%Strength%
 	set ConDisplay=%Constitution%
 	set IntDisplay=%Intelligence%
 	set HpDisplay=%Health%
 	set CharmDisplay=%Charm%
-
 	set CharDisplay=%Charisma%
 	
 	::checked against checkBase for first loop
@@ -235,6 +241,11 @@ IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 	set checkAllignment=1
 	set checkClass=1
 	set checkStat=1
+	set checkFighter=Fighter
+	set checkCleric=Cleric
+	set checkPaladin=Paladin
+	set checkRogue=Rogue
+	set checkMage=Mage
 
 	set checkBase=1
 	set checkUsed=2
@@ -258,20 +269,13 @@ IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 
 	::used in numGen
 	set genCount=1
-	echo end of initVarSet
-	pause
+
 	goto :numGen
 
 
 :numGen
-	echo in numGen
-	pause
-	set  statDisplay=%random% %% %statMax%
-	echo after random num gen
-	pause	
-
+	set /a statDisplay=(%RANDOM%*%statMax%/32768)+%statMin%
 	IF %genCount% ==  %checkBase%  goto :nameSet
-	 
 	IF %genCount% == %checkUsed% goto :statDisplayLogic
 	
 
