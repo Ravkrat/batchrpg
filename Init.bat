@@ -1,21 +1,12 @@
 @echo off
-::-------------------------------------------
-::-------------------------------------------
-::TO-DO LIST
-::-------------------------------------------
-::-------------------------------------------
-::labels working: name,allignment,class
-::labels not-working: statAllocationDisplay
-::labels not-written: initDisplay,statInfo,inputValidation
-::main labels: DISPLAY,LOGIC,INPUT BLOCKS
-::support labels: all end[name] and update[short-hand stat] labels 
-::auxillary labels:initVarSet,inputValidation 
 
+::setlocal enabledelayedexpansion
 
 ::variables
 
 ::getting things started
-goto InitVarSet
+
+goto initVarSet
 :contName
 goto nameSet
 ::after this one, execution starts jumping between aux/main/support labels
@@ -86,16 +77,25 @@ goto allignmentSelectionDisplay
 	IF /I "%statInput%"=="I" goto updateInt
 	IF /I "%statInput%"=="Ch" goto updateChar
 	IF /I "%statInput%"=="x" goto statInfoDisplay
+	IF /I "%statInput%"=="r" goto resetStats
+
+:resetStats
+	IF %ClassChoice% == %checkFighter% call  Classes.bat :fighter	
+	IF %ClassChoice% == %checkCleric% call Classes.bat :cleric 
+	IF %ClassChoice% == %checkPaladin%  call Classes.bat :paladin 
+	IF %ClassChoice% == %checkRogue%  call Classes.bat :rogue 
+	IF %ClassChoice% == %checkMage%  call Classes.bat :mage 
+	goto numGen
 
 :statDisplayLogic
 	IF  %statDisplay% GTR 0 (goto :statAllocationDisplay)
 	IF  %statDisplay% EQU 0 (goto :finalInitDisplay)
-:endClassChoice
-	IF /I "%classInput%"=="f" set ClassChoice=Fighter 
-	IF /I "%classInput%"=="c" set ClassChoice=Cleric 
-	IF /I "%classInput%"=="p" set ClassChoice=Paladin 
-	IF /I "%classInput%"=="r" set ClassChoice=Rogue 
-	IF /I "%classInput%"=="m" set ClassChoice=Mage 
+:endClassChoice	
+	IF /I "%classInput%"=="f" set ClassChoice=Fighter && call Classes.bat :fighter
+	IF /I "%classInput%"=="c" set ClassChoice=Cleric && call Classes.bat :cleric
+	IF /I "%classInput%"=="p" set ClassChoice=Paladin && call Classes.bat :paladin
+	IF /I "%classInput%"=="r" set ClassChoice=Rogue && call Classes.bat :rogue
+	IF /I "%classInput%"=="m" set ClassChoice=Mage && call Classes.bat :mage
 	cls
 	goto statAllocationDisplay
 :endallignment
@@ -113,17 +113,21 @@ goto allignmentSelectionDisplay
 	::allows for allignment selection and selection redo
 	::will eventually play a part in deciding which narrative is used
 	::plus dialoge choices w/npc's
+	:contAllignment
 	echo                   Allignment Selection
 	echo _______________________________________________________________
 	echo +                  Which are you?                             +
 	echo +[l]awfull good - [n]eutral good - [c]haotic good             +
 	echo ---------------------------------------------------------------
 	set /p allignment=
-	goto loopCheckAllignment
-	:contAllignment
-	goto endallignment
+	IF %checkAllignment% EQU %checkUsed% ( 
+		goto :finalInitDisplay
+	) ELSE (
+		goto loopCheckAllignment
+	)
 :classSelectionDisplay
 	::allows for class selection, and selection re-do
+	:contClass
 	echo                         Class Selection
 	echo ________________________________________________________________
 	echo +-Which class do you wish to play?-----------------------------+
@@ -134,102 +138,133 @@ goto allignmentSelectionDisplay
 	::takes in user input then goes to endstatInit to write it to ClassChoice.txt
 	set /p classInput= 
 	set ClassChoice=%classInput%
-	goto loopCheckClass
-	:contClass
-	goto endClassChoice
+	IF %checkClass% EQU %checkUsed% ( 
+		goto :finalInitDisplay
+	) ELSE (
+		goto loopCheckClass
+	)
+	
+	
 
 :statAllocationDisplay
 	cls
-	IF %statDisplay% EQU 9 (goto :loopCheckStart) else(goto :contStart)
-	IF %statDisplay% EQU 2 (goto :loopCheckStat) else(goto :contStat)
 	:contStat
 	set 'statinput='
 	echo                Stat-point Allocation
 	echo _______________________________________________________
-	echo +-you have %statDisplay% stat points un-assigned-----------------+
-	echo +-[S]trength [C]onstitution [I]ntelligence [Ch]arisma +
-	echo +-Strength:%StrDisplay% Constitution:%ConDisplay% Intelligence:%IntDisplay% Charisma:%CharDisplay% +
-	echo +-Hp:%HpDisplay% Charm:%CharmDisplay%----------------------------------------+
-	echo +-Stat Info [x]---------------------------------------+
-	echo -------------------------------------------------------
+	echo +-you have %statDisplay% stat points un-assigned,[r]e-roll stat points
+	echo +-[S]trength:%StrDisplay% [C]onstitution:%ConDisplay% [I]ntelligence:%IntDisplay% [Ch]arisma:%CharDisplay% 
+	echo +-Hp:%HpDisplay% Charm:%CharmDisplay%
+	echo +-Stat Info [x]
 	::taken in user input then run ifs to find match
 	set /p statInput=
 	goto statLogic
+
+
 :finalInitDisplay
-	echo Kappa Kappa
-	pause
-	goto:EOF
+	
+
+	echo are you [d]one?
+	echo re-do:[S]tats,[N]ame,[A]lignment,[C]lass
+	set /p finalInput=
+	if
 	::eventually add final display screen here 
 	::show stats,name,class,allignment
 	::and allow changing of any.
 ::statInfoDisplay
 
 :nameSet
+	set genCount=2
 	::allows for the player name to be set and resetting player-name
 	echo Remember:Your name will remain with you throughout the game.
  	set /p Name=Enter your name: 
 	cls
-	goto loopCheckName
 	
-	goto allignmentSelectionDisplay
+
+	IF %checkName% EQU %checkUsed% (
+		goto :finalInitDisplay 
+	) ELSE ( 
+		goto loopCheckName
+	)
 ::------------------------------------------------------------------------
 ::------------------------------------------------------------------------
 ::VALIDATION BLOCKS
 ::------------------------------------------------------------------------
 ::------------------------------------------------------------------------
 :inputValidation
-echo not used at the moment
+::inputValidation is not used atm
+
 ::keeps the initial-loop from repeating
+::loopCheck[Text] for use in the Check[Text] label
+
 :loopCheckName
-IF %checkName% EQU 1 set checkName=2 goto :contName
-pause
-IF %checkName% GRT 1 goto finalInitDisplay
-pause
+IF  %checkName% EQU %checkBase% set checkName=2 && goto :allignmentSelectionDisplay
 
 :loopCheckAllignment
-IF %checkAllignment% EQU 2 (goto :finalInitDisplay)
-IF %checkAllignment% EQU 1 (set checkloop=2)(goto :contAllignment)
+IF %checkAllignment% EQU %checkBase% set checkloop=2 && goto :endallignment
 
 :loopCheckClass
-IF %checkClass% EQU 2 (goto :finalInitDisplay)
-IF %checkClass% EQU 1 (set checkloop=2)(goto :contClass)
+IF %checkClass% EQU %checkBase% set checkloop=2 && goto :endClassChoice
 
 :loopCheckStat
-IF %checkStat% EQU 2 (goto :finalInitDisplay)
-IF %checkStat% EQU 1 (set checkloop=2)(goto :contStat)
+IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 ::-------------------------------------------------------------------------
 ::-------------------------------------------------------------------------
 ::VARIABLE BLOCKS
 ::-------------------------------------------------------------------------
 ::-------------------------------------------------------------------------
+:finalStats
+	set finalStrength=%Strength%
+	set finalCharisma=%Charisma%
+	set finalConstitution=%Constitution%
+	set finalIntelligence=%Intelligence%
+	set finalHealth=%Health%
+	set finalCharm=%Charm%
 :initVarSet
+
 	::variable [stat]Display is used for player feedback
 	::after variable [stat]Display is used in label statInit it will overwright 
 	::variable [stat],eventually variable [stat]/s will be written to PlayerInfo.txt
+
 	set Strength=1
-	set Health=10
-	set HealthCount=10
+	set Charisma=1
 	set Constitution=1
 	set Intelligence=1
-	set Charm=5
+	set Health=1
+	set Charm=0
+
+	set HealthCount=10
 	set CharmCount=5
-	set Charisma=1
+
 	set StrDisplay=%Strength%
 	set ConDisplay=%Constitution%
 	set IntDisplay=%Intelligence%
-	set CharDisplay=%Charisma%
 	set HpDisplay=%Health%
 	set CharmDisplay=%Charm%
+	set CharDisplay=%Charisma%
+	
+	::checked against checkBase for first loop
+	::checked against checkUsed to stop second loop-through(after finalInitDisplay is called)
 	set checkName=1
 	set checkAllignment=1
 	set checkClass=1
 	set checkStat=1
+	set checkFighter=Fighter
+	set checkCleric=Cleric
+	set checkPaladin=Paladin
+	set checkRogue=Rogue
+	set checkMage=Mage
+
+	set checkBase=1
+	set checkUsed=2
+	set statMin=1
+	set statMax=101
 
 	::used in label statAllocationDisplay
-	set statCap=10
-	set statDisplay=0
+
+	set statDisplay=1
 	set statZero=0 
-	set statDisplay=%statCap%
+	
 	
 	::used in classSelectionDisplay
 	set ClassChoice=
@@ -239,13 +274,22 @@ IF %checkStat% EQU 1 (set checkloop=2)(goto :contStat)
 
 	::used in name
 	set Name=
-	goto nameSet
 
+	::used in numGen
+	set genCount=1
+
+	goto :numGen
+
+
+:numGen
+	set /a statDisplay=(%RANDOM%*%statMax%/32768)+%statMin%
+	IF %genCount% ==  %checkBase%  goto :nameSet
+	IF %genCount% == %checkUsed% goto :statDisplayLogic
 	
 
 
-CALL PlayerInfo.bat 
+::CALL PlayerInfo.bat 
 
-::echo %ClassChoice% > ClassChoice.txt
-::echo %Name% > PlayerInfo.txt
+
+echo %Name% > PlayerInfo.txt :playerName
 ::echo %nature% >> PlayerInfo.txt
