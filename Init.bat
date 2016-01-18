@@ -164,9 +164,10 @@ goto allignmentSelectionDisplay
 :finalInitDisplay
 	
 
-	echo finalInitDisplay
-	pause
-	exit /b
+	echo are you [d]one?
+	echo re-do:[S]tats,[N]ame,[A]lignment,[C]lass
+	set /p finalInput=
+	if
 	::eventually add final display screen here 
 	::show stats,name,class,allignment
 	::and allow changing of any.
@@ -212,6 +213,13 @@ IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 ::VARIABLE BLOCKS
 ::-------------------------------------------------------------------------
 ::-------------------------------------------------------------------------
+:finalStats
+	set finalStrength=%Strength%
+	set finalCharisma=%Charisma%
+	set finalConstitution=%Constitution%
+	set finalIntelligence=%Intelligence%
+	set finalHealth=%Health%
+	set finalCharm=%Charm%
 :initVarSet
 
 	::variable [stat]Display is used for player feedback
@@ -283,5 +291,5 @@ IF %checkStat% EQU %checkBase% set checkloop=2 && goto :contStat
 ::CALL PlayerInfo.bat 
 
 
-::echo %Name% > PlayerInfo.txt
+echo %Name% > PlayerInfo.txt :playerName
 ::echo %nature% >> PlayerInfo.txt
